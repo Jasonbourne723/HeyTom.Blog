@@ -20,13 +20,13 @@
             </el-table-column>
             <el-table-column label="操作" width="200">
                 <template slot-scope="scope">
-                    <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                    <el-button type="text" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
                 </template>
             </el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
                     <el-popconfirm title="确认执行删除操作吗" @onConfirm="handleDelete(scope.$index, scope.row)">
-                        <el-button size="mini" slot="reference">删除</el-button>
+                        <el-button type="text" slot="reference">删除</el-button>
                     </el-popconfirm>
                 </template>
             </el-table-column>

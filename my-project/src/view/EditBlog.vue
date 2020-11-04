@@ -5,18 +5,18 @@
             <vue-tinymce v-model="Blog.content" :setting="Setting" />
         </div>
         <el-button type="primary" @click="AddBlog">发布</el-button>
-        <el-button  plain>保存</el-button>
-        <el-button  plain>取消</el-button>
+        <el-button plain>保存</el-button>
+        <el-button plain>取消</el-button>
     </div>
 </template>
 
 <script>
-    import { AddBlogRequest,GetBlogByIdRequest } from "../api/api";
+    import { AddBlogRequest, GetBlogByIdRequest,UpdateBlogRequest } from "../api/api";
     export default {
         data() {
             return {
                 Blog: {
-                    id : 0,
+                    id: 0,
                     name: "",
                     content: ""
                 },
@@ -30,29 +30,40 @@
         },
         methods: {
             AddBlog: function () {
-                if(this.Blog.id > 0)
-                {
+                if (this.Blog.id > 0) {
 
-
+                    UpdateBlogRequest(this.Blog).then(res => {
+                        if (res.IsSuccess) {
+                            this.$notify({
+                                title: '成功',
+                                message: '修改成功',
+                                type: 'success'
+                            });
+                        } else {
+                            this.$notify({
+                                title: '失败',
+                                message: res.Message,
+                                type: 'error'
+                            });
+                        }
+                    });
                 }
-                else
-                {
+                else {
                     AddBlogRequest(this.Blog).then(res => {
-                    if (res.IsSuccess) {
-                        this.$notify({
-                            title: '成功',
-                            message: '新增成功',
-                            type: 'success'
-                        });
-                    } else {
-                        this.$notify({
-                            title: '失败',
-                            message: res.Message,
-                            type: 'error'
-                        });
-                    }
-                });
-
+                        if (res.IsSuccess) {
+                            this.$notify({
+                                title: '成功',
+                                message: '新增成功',
+                                type: 'success'
+                            });
+                        } else {
+                            this.$notify({
+                                title: '失败',
+                                message: res.Message,
+                                type: 'error'
+                            });
+                        }
+                    });
                 }
             },
             GetOne: function (id) {
@@ -64,17 +75,16 @@
                         this.Blog = res.TModel;
                     }
                     else {
-                        
+
                     }
                 });
             }
         },
-        created () {
-           if( this.$route.query.id)
-           {
+        created() {
+            if (this.$route.query.id) {
                 this.GetOne(this.$route.query.id);
-           }
+            }
         }
     }
 </script>
-<style ></style>
+<style></style>

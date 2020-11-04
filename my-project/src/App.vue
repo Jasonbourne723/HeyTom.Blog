@@ -199,6 +199,11 @@
       }
     },
     created() {
+      console.log(this.$route);
+      if(this.$route.meta.noNeedOAuth === true)
+      {
+        return;
+      }
       if (this.alreadyLoadMenu != 1) {
         var userInfoStr = localStorage.getItem("userInfo");
         console.log("userInfoStr:" + userInfoStr);
@@ -209,6 +214,7 @@
           };
           GetMenuByEmailRequest(params).then(res => {
             if (res.IsSuccess) {
+              console.log(res.TModel);
               this.$notify({
                 title: '成功',
                 message: '获取菜单权限成功',
@@ -259,7 +265,7 @@
                 this.$router.addRoutes(this.RouteObjs);
 
               }
-
+              this.alreadyLoadMenu = 1;
             } else {
               this.$notity({
                 title: '失败',
@@ -271,13 +277,18 @@
             error => {
             }
           );
-          this.alreadyLoadMenu = 1;
+
         }
       };
     },
     watch: {
       '$route'(to, from) {
-        console.log("11");
+        console.log(to);
+        if(to.meta.noNeedOAuth === true)
+        {
+          return;
+        }
+        console.log(this.alreadyLoadMenu);
         if (this.alreadyLoadMenu != 1) {
           var userInfoStr = localStorage.getItem("userInfo");
           console.log("userInfoStr:" + userInfoStr);
@@ -288,6 +299,7 @@
             };
             GetMenuByEmailRequest(params).then(res => {
               if (res.IsSuccess) {
+                console.log(res.TModel);
                 this.$notify({
                   title: '成功',
                   message: '获取菜单权限成功',

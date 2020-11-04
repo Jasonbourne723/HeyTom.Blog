@@ -9,13 +9,13 @@
             </el-table-column>
             <el-table-column label="操作" width="200">
                 <template slot-scope="scope">
-                    <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                    <el-button type="text" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
                 </template>
             </el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
                     <el-popconfirm title="确认执行此操作吗" @onConfirm="handleDelete(scope.$index, scope.row)">
-                        <el-button size="mini" slot="reference">
+                        <el-button  type="text" slot="reference">
                             {{scope.row.isDel == 1?"还原":"删除"}}
                         </el-button>
                     </el-popconfirm>
@@ -30,7 +30,7 @@
     </div>
 </template>
 <script>
-    import { GetBlogRequest } from "../api/api";
+    import { GetBlogRequest,UpdateBlogRequest,DeleteBlogRequest } from "../api/api";
     export default {
 
         data() {
@@ -44,11 +44,11 @@
         },
         methods: {
             tableRowClassName({ row, rowIndex }) {
-                if (row.isDel === 1) {
-                    return 'warning-row';
-                } else if (row.status === 0) {
-                    return 'info-row';
-                }
+                // if (row.isDel === 1) {
+                //     return 'warning-row';
+                // } else if (row.status === 0) {
+                //     return 'info-row';
+                // }
                 return '';
             },
             CurrentChange: function (val) {
@@ -56,10 +56,27 @@
                 this.GetBlogs();
             },
             handleEdit(index, row) {
-                this.$router.push({path:"/EditBlog",query:{id:row.id}});
+                this.$router.push({ path: "/EditBlog", query: { id: row.id } });
             },
             handleDelete(index, row) {
                 console.log(index, row);
+                DeleteBlogRequest({id:row.id}).then(res=>{
+                    if (res.IsSuccess) {
+                        this.$notify({
+                            title: '成功',
+                            message: '删除成功',
+                            type: 'success'
+                        });
+                        this.GetBlogs();
+                    }
+                    else {
+                        this.$notify({
+                            title: '失败',
+                            message: res.message,
+                            type: 'error'
+                        });
+                    }
+                });
             },
             GetBlogs: function () {
                 var param = {

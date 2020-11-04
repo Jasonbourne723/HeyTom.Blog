@@ -23,7 +23,7 @@ const createRouter = () => new Router({
       name: "Blog",
       component: Blog,
       meta: {
-        NoNeedOAuth: true
+        noNeedOAuth: true
       }
     },
     {
@@ -31,7 +31,7 @@ const createRouter = () => new Router({
       name: "Blogs",
       component: Blogs,
       meta: {
-        NoNeedOAuth: true
+        noNeedOAuth: true
       }
     },
     {
@@ -41,7 +41,7 @@ const createRouter = () => new Router({
       meta: {
         title: "登录",
         isLogin: true,
-        NoNeedOAuth: true
+        noNeedOAuth: true
       }
     }
   ]
@@ -61,7 +61,7 @@ router.beforeEach((to, from, next) => {
       next();
     }
   }
-  if (to.meta.NoNeedOAuth != true) {
+  if (to.meta.noNeedOAuth != true) {
     if (!window.localStorage.getItem("token")) {
       next({ path: "/login", query: { redirect: to.fullPath } });
     }

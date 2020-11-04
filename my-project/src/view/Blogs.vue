@@ -1,7 +1,8 @@
 <template>
     <div>
         <div class="blogitem" v-for="(item,index) in Blogs" :key="index">
-            <el-link :underline="false" @click="GetOne(item.id)" style="font-size:20px;color:black" > {{item.categoryName}}
+            <el-link :underline="false" @click="GetOne(item.id)" style="font-size:20px;color:black">
+                {{item.categoryName}}
                 {{item.categoryName != null?":":""}} {{item.name}}</el-link>
             <p></p>
             <span> <i class="el-icon-edit"></i> 评论(1) </span>
@@ -27,7 +28,7 @@
                 CategoryId: 0,
                 Name: "",
                 PageIndex: 1,
-                PageSize:10
+                PageSize: 10
             }
         },
         //方法
@@ -43,7 +44,14 @@
                 var param = {
                     "pageIndex": this.PageIndex,
                     "pageSize": this.PageSize,
-                    "filter": [],
+                    "filter": [
+                        {
+                            "field": "isDel",
+                            "value": "0",
+                            "operator": "=",
+                            "connector": "and"
+                        }
+                    ],
                     "sort": [
                         {
                             "field": "createDate",

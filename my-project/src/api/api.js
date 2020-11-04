@@ -91,6 +91,14 @@ export const AddBlogRequest = params => {
     return axios.post(`${BlogApiUrl}/api/blog/add`, params).then(res => res.data);
 }
 
+export const UpdateBlogRequest = params => {
+    return axios.post(`${BlogApiUrl}/api/blog/update`, params).then(res => res.data);
+}
+
+export const DeleteBlogRequest = params => {
+    return axios.post(`${BlogApiUrl}/api/blog/remove`, params).then(res => res.data);
+}
+
 export const GetAuthorRequest = params => {
     return axios.post(`${BlogApiUrl}/api/Author/GetOne`, params).then(res => res.data);
 }
@@ -146,8 +154,8 @@ export const UpdateSubMenuRequest = params => {
 
 
 // role 
-export const GetAllRoleRequest = params => {
-    return axios.post(`${ManageApiUrl}/api/Role/GetAll`, params).then(res => res.data);
+export const GetAllRoleRequest = () => {
+    return axios.post(`${ManageApiUrl}/api/Role/GetAll`, {}).then(res => res.data);
 }
 
 export const AddRoleRequest = params => {
@@ -162,4 +170,10 @@ export const UpdateRoleRequest = params => {
     return axios.post(`${ManageApiUrl}/api/Role/Update`, params).then(res => res.data);
 }
 
+export const GetMenusByRoleRequest = params => {
+    return axios.post(`${ManageApiUrl}/api/Menu/GetByRole`, params).then(res => res.data);
+}
 
+export const SetMenuPermissionsRequest = params => {
+    return axios.post(`${ManageApiUrl}/api/Role/SetMenuPermissions`, params).then(res => res.data);
+}
