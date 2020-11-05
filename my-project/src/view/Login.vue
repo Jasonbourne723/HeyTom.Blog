@@ -10,8 +10,8 @@
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" @click="LoginAccount">登录</el-button>
-                <el-button type="success" style="margin-left:50px">
-                    <router-link to="/Register" style=" text-decoration:none">注册</router-link>
+                <el-button type="success" @click="RegisterVisible=true" style="margin-left:50px">
+                    注册
                 </el-button>
             </el-form-item>
             <el-form-item>
@@ -25,13 +25,38 @@
                 </el-button>
             </el-form-item>
         </el-form>
+
+        <el-dialog title="注册" :visible.sync="RegisterVisible" width="40%" style="margin-left: 30%;">
+            <el-form>
+                <el-input type="text" placeholder="邮箱" v-model="RegisterInfo.email"></el-input>
+                <el-form-item>
+                    <el-input type="text" placeholder="验证码" v-model="RegisterInfo.verificationCode"></el-input>
+                    <el-button @click=" SendVerificationCode" :disabled="CanSendCode">点击发送</el-button>
+                </el-form-item>
+
+                <el-input type="text" placeholder="昵称" v-model="RegisterInfo.nickName"></el-input>
+                <el-input type="password" placeholder="密码" v-model="RegisterInfo.password"></el-input>
+                <el-button type="primary" @click="Register">确 定</el-button>
+                <el-button @click="RegisterVisible = false">取 消</el-button>
+            </el-form>
+        </el-dialog>
+
+        </el-dialog>
     </div>
 </template>
 <script>
-    import { loginRequest, getUserInfoRequest } from "../api/api";
+    import { LoginRequest, GetUserInfoRequest, RegisterRequest, SendVerificationCodeRequest } from "../api/api";
     export default {
         data() {
             return {
+                CanSendCode: false,
+                RegisterVisible: false,
+                RegisterInfo: {
+                    "email": "",
+                    "password": "",
+                    "nickName": "",
+                    "verificationCode": ""
+                },
                 logintitle: "系统登录",
                 loginparam: {
                     email: "420994592@qq.com",
@@ -40,12 +65,48 @@
             };
         },
         methods: {
+            SendVerificationCode: function () {
+                this.CanSendCode = true;
+                SendVerificationCodeRequest({ email: this.RegisterInfo.email }).then(res => {
+                    if (res.IsSuccess) {
+                        this.$notify({
+                            type: "success",
+                            message: `验证码发送成功`,
+                        });
+                    } else {
+                        this.$message.error({
+                            message: res.Message
+                        });
+                        this.CanSendCode = false;
+                    }
+                });
+            },
+            Register: function () {
+                RegisterRequest(this.RegisterInfo).then(res => {
+                    if (res.IsSuccess) {
+                        this.RegisterVisible = false;
+                        this.$notify({
+                            type: "success",
+                            message: `注册成功`,
+                        });
+                        this.loginparam.email = this.RegisterInfo.email;
+                        this.loginparam.password = this.RegisterInfo.password;
+                        LoginAccount();
+                    } else {
+
+                        this.$message.error({
+                            message: res.Message
+                        });
+                    }
+
+                })
+            },
             LoginAccount() {
                 var loginparam1 = {
                     email: this.loginparam.email,
                     password: this.loginparam.password
                 };
-                loginRequest(loginparam1)
+                LoginRequest(loginparam1)
                     .then(
                         function (res) {
                             if (res.IsSuccess) {
@@ -73,7 +134,7 @@
                     );
             },
             GetUserInfo() {
-                getUserInfoRequest()
+                GetUserInfoRequest()
                     .then(
                         function (res) {
                             if (res.IsSuccess) {

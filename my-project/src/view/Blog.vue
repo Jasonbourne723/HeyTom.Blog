@@ -5,7 +5,7 @@
         </div>
         <el-divider></el-divider>
         <div class="divacc">
-           <span>分类：{{Blog.categoryName}}</span>
+            <span>分类：{{Blog.categoryName}}</span>
         </div>
         <div>
             <p v-html="Blog.content"></p>
@@ -20,6 +20,31 @@
                 <li>版权声明：自由转载-非商用-非衍生-保持署名（创意共享3.0许可证）</li>
             </ul>
         </div>
+
+        <div v-show="Comments.length >0">
+            <h4>评论列表</h4>
+            <el-divider></el-divider>
+            <div v-for="(item,index) in Comments" :key="index">
+                <div style="font-size: smaller;">
+                    <el-button type="text" style="float: right;">回复</el-button>
+                    <span># {{item.createDate}}</span>
+                    <span>{{item.userName}}</span>
+                </div>
+                <div v-if="item.parent" style=" margin-top: 10px;">
+                    <span style="font-size: smaller;"> @{{item.parent.userName}} {{item.parent.content}}</span>
+                </div>
+               <a :name="item.id"> <div v-html="item.content" style="color: gray;"></div></a>
+                <el-divider></el-divider>
+            </div>
+        </div>
+        <div class="diveditcomment">
+            <el-form>
+                <div style="margin-top: 20px;margin-bottom: 20px;">
+                    <vue-tinymce v-model="CommentParam.content" :setting="Setting" />
+                </div>
+                <el-button type="primary" style="margin: 20px; float: right;">提交评论</el-button>
+            </el-form>
+        </div>
     </div>
 </template>
 <script>
@@ -27,7 +52,23 @@
     export default {
         data() {
             return {
-                Blog: {}
+                Blog: {},
+                CommentParam: {},
+                Comments: [
+                    {
+                        id: 1,
+                        content: "<html>aa<html>",
+                        createDate: "2020-10-10 09:36",
+                        userId: 1,
+                        userName: "星语心愿"
+                    }
+                ],
+                Setting: {
+                    height: 300,
+                    menubar: false,
+                    plugins: "codesample hr lists emoticons image",
+                    toolbar: 'lineheight  undo redo| codesample hr | numlist bullist | styleselect alignleft  alignright | bold italic subscript superscript | formats removeformat newdocument | forecolor backcolor | emoticons image'
+                }
             }
         },
         methods: {
@@ -60,7 +101,11 @@
     }
 </script>
 <style>
-   .divblogname h1 {
+    .diveditcomment {
+        margin-top: 30px;
+    }
+
+    .divblogname h1 {
         text-align: center;
     }
 
@@ -68,6 +113,7 @@
         background-color: lightgrey;
         color: #606266;
         padding: 20px;
+        margin: 20px;
         border-radius: 10px;
     }
 
@@ -75,7 +121,7 @@
         margin: 10px;
     }
 
-    .divacc{
+    .divacc {
         margin-bottom: 10px;
         text-align: right;
     }
@@ -86,5 +132,4 @@
         font-size: 1em;
         border: 1px cornflowerblue solid;
     }
-
 </style>

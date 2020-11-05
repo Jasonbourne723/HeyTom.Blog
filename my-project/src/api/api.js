@@ -58,11 +58,11 @@ export const OAuthUrl = "http://192.168.124.16/OpenApi/OAuth";
 
 
 //login
-export const loginRequest = params => {
+export const LoginRequest = params => {
     return axios.get(`${OAuthUrl}/api/Login`, { params: params }).then(res => res.data);
 };
 
-export const getUserInfoRequest = params => {
+export const GetUserInfoRequest = params => {
     return axios.post(`${OAuthUrl}/api/Login/GetUserInfo`, params).then(res => res.data);
 }
 
@@ -70,11 +70,11 @@ export const getUserInfoRequest = params => {
 //     return axios.get(`${BaseApiUrl}/api/Login/GitHubCallBcak`,{params: params}).then(res=>res.data);
 // }
 
-export const sendVerificationCode = params => {
-    return axios.post(`${OAuthUrl}/api/Register/SendVerificationCode`, params).then(res => res.data);
+export const SendVerificationCodeRequest = params => {
+    return axios.post(`${OAuthUrl}/api/Register/VerificationCode`, params).then(res => res.data);
 }
 
-export const Register = params => {
+export const RegisterRequest = params => {
     return axios.post(`${OAuthUrl}/api/Register`, params).then(res => res.data);
 }
 
@@ -176,4 +176,8 @@ export const GetMenusByRoleRequest = params => {
 
 export const SetMenuPermissionsRequest = params => {
     return axios.post(`${ManageApiUrl}/api/Role/SetMenuPermissions`, params).then(res => res.data);
+}
+
+export const GetUsersRequest = params => {
+    return axios.post(`${ManageApiUrl}/api/User/List`, params).then(res => res.data);
 }

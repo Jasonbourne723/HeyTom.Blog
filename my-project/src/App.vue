@@ -17,6 +17,9 @@
                   </div>
                 </el-col>
                 <el-col :span="4">
+                  <div style="font-size: 10px; text-align: right; margin-right: 40px; margin-top: 5px;">
+                    <el-link type="primary" :underline=false>{{UserLoginStatus}}</el-link>
+                  </div>
                   <div id="divSearch">
                     <el-input placeholder="请输入内容" v-model="SearchStr" @keyup.enter.native="GetBlogByName">
                       <i slot="suffix" class="el-icon-search el-input__icon"></i>
@@ -69,11 +72,13 @@
           <div class="navuser">
             <el-dropdown>
               <span>
-                420994592@qq.com<i class="el-icon-arrow-down el-icon--right"></i>
+                {{User.email}}<i class="el-icon-arrow-down el-icon--right"></i>
               </span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item>博客</el-dropdown-item>
                 <el-dropdown-item>个人资料</el-dropdown-item>
+                <el-dropdown-item>
+                  <el-link :underline="false" @click="LogOut">退出</el-link>
+                </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </div>
@@ -144,9 +149,15 @@
         RouteObjs: [],
         Menus: [],
         AlreadyLoadMenu: 0,
+        User: {}
       }
     },
     methods: {
+      LogOut: function () {
+        window.localStorage.clear();
+        location.reload();
+        this.$router.push({ path: "/login" });
+      },
       AsideMouseEnterHandle: function (e) {
         this.IsCollapse = false;
       },
@@ -196,18 +207,27 @@
         else {
           return '200px';
         }
+      },
+      UserLoginStatus: function () {
+        var userStr = localStorage.getItem("userInfo");
+        var user = JSON.parse(userStr);
+        if (user) {
+          return  user.name ;
+        }
+        else {
+          return "未登录";
+        }
       }
     },
     created() {
       console.log(this.$route);
-      if(this.$route.meta.noNeedOAuth === true)
-      {
+      if (this.$route.meta.noNeedOAuth === true) {
         return;
       }
       if (this.alreadyLoadMenu != 1) {
         var userInfoStr = localStorage.getItem("userInfo");
-        console.log("userInfoStr:" + userInfoStr);
         var userInfo = JSON.parse(userInfoStr);
+        this.User = userInfo;
         if (userInfo) {
           var params = {
             email: userInfo.email
@@ -284,15 +304,13 @@
     watch: {
       '$route'(to, from) {
         console.log(to);
-        if(to.meta.noNeedOAuth === true)
-        {
+        if (to.meta.noNeedOAuth === true) {
           return;
         }
-        console.log(this.alreadyLoadMenu);
         if (this.alreadyLoadMenu != 1) {
           var userInfoStr = localStorage.getItem("userInfo");
-          console.log("userInfoStr:" + userInfoStr);
           var userInfo = JSON.parse(userInfoStr);
+          this.User = userInfo;
           if (userInfo) {
             var params = {
               email: userInfo.email
@@ -380,13 +398,21 @@
     margin: 0px;
   }
 
-  #sitehead p,
-  #divSearch {
+  #sitehead p {
     font-size: xx-large;
     text-align: left;
     margin-top: 0px;
     border: 5px hidden gray;
     padding: 20px 20px 20px 0px;
+    font-weight: bolder;
+  }
+
+  #divSearch {
+    font-size: xx-large;
+    text-align: left;
+    margin-top: 0px;
+    border: 5px hidden gray;
+    padding-right: 20px;
     font-weight: bolder;
   }
 

@@ -72,6 +72,10 @@ router.beforeEach((to, from, next) => {
   else {
     next();
   }
+  if(to.matched.length == 0)
+  {
+    next({path:"/"});
+  }
 });
 
 export default router;
