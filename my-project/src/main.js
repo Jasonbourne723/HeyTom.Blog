@@ -8,7 +8,12 @@ import 'element-ui/lib/theme-chalk/index.css'
 import VueTinymce from "@packy-tang/vue-tinymce"
 import   jwt  from  'jsonwebtoken'
 
+import utils from './api/util.js';   //获取url参数
+import echarts from 'echarts'
+
+
 Vue.config.productionTip = false;
+
 import {
   Pagination,
   Dialog,
@@ -173,7 +178,10 @@ Vue.prototype.$confirm = MessageBox.confirm;
 Vue.prototype.$prompt = MessageBox.prompt;
 Vue.prototype.$notify = Notification;
 Vue.prototype.$message = Message;
+Vue.prototype.$utils = utils;   //注册全局方法
+Vue.prototype.$echarts = echarts;
 Vue.use(ElementUI);
+Vue.use(utils);
 
  //安装组件
  Vue.use(VueTinymce);

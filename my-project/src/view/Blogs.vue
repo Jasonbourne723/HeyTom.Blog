@@ -35,7 +35,7 @@
         methods: {
             ToDateTime: function (createDate) {
                 createDate = new Date(createDate);
-                return `${createDate.getFullYear()}-${createDate.getMonth()}-${createDate.getDate()}`;
+                return this.$utils.ToDateTime(createDate);
             },
             GetOne: function (id) {
                 this.$router.push("Blog/" + id);
@@ -105,7 +105,6 @@
         },
         watch: {
             '$route'(to, from) {
-                console.log("aaaaa");
                 this.PageIndex = 1;
                 this.CategoryId = this.$route.query.categoryId;
                 this.Name = this.$route.query.name;

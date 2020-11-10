@@ -15,6 +15,7 @@ const createRouter = () => new Router({
       name: "Home",
       component: Home,
       meta: {
+        title: "首页",
         isManage: true
       }
     },

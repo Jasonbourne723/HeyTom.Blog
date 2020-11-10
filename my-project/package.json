@@ -12,6 +12,7 @@
   "dependencies": {
     "@packy-tang/vue-tinymce": "^1.1.0",
     "axios": "^0.21.0",
+    "echarts": "^4.9.0",
     "element-ui": "^2.13.2",
     "jsonwebtoken": "^8.5.1",
     "vue": "^2.5.2",

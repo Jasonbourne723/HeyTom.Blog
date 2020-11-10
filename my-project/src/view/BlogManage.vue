@@ -1,21 +1,23 @@
 <template>
     <div>
-        <el-table :data="Blogs" style="width: 100%" size="large" :row-class-name="tableRowClassName">
+        <el-table :data="Blogs" style="width: 100%" size="large" :row-class-name="TableRowClassName">
             <el-table-column prop="name" label="标题" width="500">
+            </el-table-column>
+            <el-table-column prop="categoryName" label="分类" width="500">
             </el-table-column>
             <el-table-column prop="createDate" label="发布日期" width="300">
             </el-table-column>
-            <el-table-column prop="status" label="发布状态">
+            <el-table-column :prop="status" label="发布状态" :formatter="StatusName">
             </el-table-column>
             <el-table-column label="操作" width="200">
                 <template slot-scope="scope">
-                    <el-button type="text" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                    <el-button type="text" @click="HandleEdit(scope.$index, scope.row)">编辑</el-button>
                 </template>
             </el-table-column>
             <el-table-column label="操作">
                 <template slot-scope="scope">
-                    <el-popconfirm title="确认执行此操作吗" @onConfirm="handleDelete(scope.$index, scope.row)">
-                        <el-button  type="text" slot="reference">
+                    <el-popconfirm title="确认执行此操作吗" @onConfirm="HandleDelete(scope.$index, scope.row)">
+                        <el-button type="text" slot="reference">
                             {{scope.row.isDel == 1?"还原":"删除"}}
                         </el-button>
                     </el-popconfirm>
@@ -30,7 +32,7 @@
     </div>
 </template>
 <script>
-    import { GetBlogRequest,UpdateBlogRequest,DeleteBlogRequest } from "../api/api";
+    import { GetBlogRequest, UpdateBlogRequest, DeleteBlogRequest } from "../api/api";
     export default {
 
         data() {
@@ -43,7 +45,18 @@
             }
         },
         methods: {
-            tableRowClassName({ row, rowIndex }) {
+            StatusName: function (row,column) {
+                if(row.status == 0)
+                {
+                    return "未发布";
+                }
+                else
+                {
+                    return "已发布"
+                }
+            },
+
+            TableRowClassName({ row, rowIndex }) {
                 // if (row.isDel === 1) {
                 //     return 'warning-row';
                 // } else if (row.status === 0) {
@@ -55,12 +68,12 @@
                 this.PageIndex = val;
                 this.GetBlogs();
             },
-            handleEdit(index, row) {
+            HandleEdit(index, row) {
                 this.$router.push({ path: "/EditBlog", query: { id: row.id } });
             },
-            handleDelete(index, row) {
+            HandleDelete(index, row) {
                 console.log(index, row);
-                DeleteBlogRequest({id:row.id}).then(res=>{
+                DeleteBlogRequest({ id: row.id }).then(res => {
                     if (res.IsSuccess) {
                         this.$notify({
                             title: '成功',
@@ -82,7 +95,14 @@
                 var param = {
                     "pageIndex": this.PageIndex,
                     "pageSize": 10,
-                    "filter": []
+                    "filter": [],
+                    "sort": [{
+                        "field": "isDel",
+                        "value": "asc"
+                    }, {
+                        "field": "id",
+                        "value": "desc"
+                    }]
                 };
                 if (this.CategoryId > 0) {
                     param.filter.push(

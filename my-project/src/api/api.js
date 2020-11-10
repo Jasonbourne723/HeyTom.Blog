@@ -103,6 +103,16 @@ export const GetAuthorRequest = params => {
     return axios.post(`${BlogApiUrl}/api/Author/GetOne`, params).then(res => res.data);
 }
 
+export const GetBlogCommentRequest = params => {
+    return axios.post(`${BlogApiUrl}/api/BlogComment/List`, params).then(res => res.data);
+}
+export const AddBlogCommentRequest = params => {
+    return axios.post(`${BlogApiUrl}/api/BlogComment/Add`, params).then(res => res.data);
+}
+export const RemoveBlogCommentRequest = params => {
+    return axios.post(`${BlogApiUrl}/api/BlogComment/Remove`, params).then(res => res.data);
+}
+
 //category
 export const GetCategoryRequest = () => {
     return axios.post(`${BlogApiUrl}/api/Category/GetAll`, {}).then(res => res.data);

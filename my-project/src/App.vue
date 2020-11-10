@@ -18,7 +18,8 @@
                 </el-col>
                 <el-col :span="4">
                   <div style="font-size: 10px; text-align: right; margin-right: 40px; margin-top: 5px;">
-                    <el-link type="primary" :underline=false>{{UserLoginStatus}}</el-link>
+                    <el-link type="primary" :underline=false @click="RouteToLogin">{{UserLoginStatus()}}</el-link>
+                    <el-link type="primary" v-show="IsLogin" :underline=false @click="BlogLogOut">退出</el-link>
                   </div>
                   <div id="divSearch">
                     <el-input placeholder="请输入内容" v-model="SearchStr" @keyup.enter.native="GetBlogByName">
@@ -114,7 +115,7 @@
             </div>
           </el-aside>
           <el-main class="manage" @mouseout.native="AsideMouseOutHandle($event)">
-            <div class="divpageheader">
+            <div class="divpageheader" style="line-height: 20px;">
               <p>{{this.$route.meta.title}}</p>
             </div>
             <div class="divbody">
@@ -134,6 +135,7 @@
     name: 'App',
     data() {
       return {
+        IsLogin: 0,
         SiteName: "Jasonbourne`s Blog",
         SearchStr: "",
         Categorys: [
@@ -153,10 +155,39 @@
       }
     },
     methods: {
-      LogOut: function () {
+      UserLoginStatus: function () {
+        var userStr = localStorage.getItem("userInfo");
+        var user = JSON.parse(userStr);
+        if (user) {
+          this.IsLogin = 1;
+          return user.name;
+        }
+        else {
+          this.IsLogin = 0;
+          return "未登录";
+        }
+      },
+      RouteToLogin: function () {
+        var userStr = localStorage.getItem("userInfo");
+        var user = JSON.parse(userStr);
+        if (user) {
+
+        }
+        else {
+
+          this.$router.push({ path: "/login", query: { redirect: this.$route.path } });
+        }
+      },
+      BlogLogOut: function () {
         window.localStorage.clear();
         location.reload();
-        this.$router.push({ path: "/login" });
+
+      },
+      LogOut: function () {
+        window.localStorage.clear();
+        this.$router.push({ path: "/login", query: { redirect: this.$route.path } });
+        location.reload();
+
       },
       AsideMouseEnterHandle: function (e) {
         this.IsCollapse = false;
@@ -208,16 +239,7 @@
           return '200px';
         }
       },
-      UserLoginStatus: function () {
-        var userStr = localStorage.getItem("userInfo");
-        var user = JSON.parse(userStr);
-        if (user) {
-          return  user.name ;
-        }
-        else {
-          return "未登录";
-        }
-      }
+
     },
     created() {
       console.log(this.$route);
@@ -454,7 +476,6 @@
   .divpageheader {
     font-weight: bolder;
     font-size: medium;
-    margin-left: 5px;
   }
 
   .el-header.manage {
@@ -465,6 +486,7 @@
 
   .el-main.manage {
     padding: 5px 20px;
+    height: 100%;
   }
 
   .el-aside.manage {
