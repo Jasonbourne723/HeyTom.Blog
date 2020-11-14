@@ -52,9 +52,9 @@ axios.interceptors.response.use(
     }
 );
 
-export const BlogApiUrl = "http://192.168.124.16/OpenApi/myBlog";
-export const ManageApiUrl = "http://192.168.124.16/OpenApi/Manage";
-export const OAuthUrl = "http://192.168.124.16/OpenApi/OAuth";
+export const BlogApiUrl = "http://localhost/OpenApi/myBlog";
+export const ManageApiUrl = "http://localhost/OpenApi/Manage";
+export const OAuthUrl = "http://localhost/OpenApi/OAuth";
 
 
 //login

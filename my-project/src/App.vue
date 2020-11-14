@@ -69,7 +69,6 @@
         <el-header class="manage">
           <el-link href="/" :underline="false"><img src="./assets/logo.png" width="140px" alt="" srcset=""
               style="margin-top:10px;float:left;"> </el-link>
-
           <div class="navuser">
             <el-dropdown>
               <span>
@@ -84,13 +83,21 @@
             </el-dropdown>
           </div>
           <div class="navuser">
-            <span><i class="el-icon-message"></i></span>
+            <span>
+              <router-link to="/Message/CommentMessage" style="text-decoration:none">
+                <el-button type="primary" icon="el-icon-message" circle></el-button>
+              </router-link>
+            </span>
           </div>
           <div class="navuser">
-            <a href="">帮助</a>
+            <router-link to="/help">
+              帮助
+            </router-link>
           </div>
           <div class="navuser">
-            <a href="/Blogs">博客</a>
+            <router-link to="/blogs">
+              博客
+            </router-link>
           </div>
         </el-header>
         <el-container class="manage">
@@ -115,9 +122,9 @@
             </div>
           </el-aside>
           <el-main class="manage" @mouseout.native="AsideMouseOutHandle($event)">
-            <div class="divpageheader" style="line-height: 20px;">
+            <!-- <div class="divpageheader" style="line-height: 20px;">
               <p>{{this.$route.meta.title}}</p>
-            </div>
+            </div> -->
             <div class="divbody">
               <router-view></router-view>
             </div>
@@ -131,6 +138,7 @@
 <script>
 
   import { GetCategoryRequest, GetAuthorRequest, GetMenuByEmailRequest } from "./api/api";
+  import * as signalR from "@aspnet/signalr";
   export default {
     name: 'App',
     data() {
@@ -221,7 +229,28 @@
         if (this.$route.query.name != this.SearchStr) {
           this.$router.push({ path: "/Blogs", query: { name: this.SearchStr } });
         }
+      },
+      StartSignalr: function () {
+        var token = window.localStorage.getItem("token");
+        token = "Bearer " + token;
+        this.connection = new signalR.HubConnectionBuilder()
+          .withUrl("http://localhost:5000/CommentHub", {
+            skipNegotiation: true,
+            transport: signalR.HttpTransportType.WebSockets,
+            accessTokenFactory: () => token
+          })
+          .configureLogging(signalR.LogLevel.Information)
+          .build();
+        this.connection.on("Test", (message) => {
+          this.$notify({
+            title: '你有一条新的消息',
+            message: '评论',
+            type: 'success'
+          });
+        });
+        this.connection.start();
       }
+
     },
     mounted() {
       this.GetCatetory();
@@ -242,7 +271,6 @@
 
     },
     created() {
-      console.log(this.$route);
       if (this.$route.meta.noNeedOAuth === true) {
         return;
       }
@@ -319,7 +347,7 @@
             error => {
             }
           );
-
+          this.StartSignalr();
         }
       };
     },

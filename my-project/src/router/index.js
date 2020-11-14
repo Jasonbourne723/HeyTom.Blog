@@ -4,6 +4,10 @@ import Blog from '@/view/Blog'
 import Blogs from '@/view/Blogs'
 import Login from '@/view/Login'
 import Home from '@/view/Home'
+import Help from '@/view/Help'
+import Message from '@/view/Message'
+import CommentMessage from '@/view/Message/CommentMessage'
+import SystemMessage from '@/view/Message/SystemMessage'
 
 Vue.use(Router)
 
@@ -16,6 +20,44 @@ const createRouter = () => new Router({
       component: Home,
       meta: {
         title: "首页",
+        isManage: true
+      }
+    },
+    {
+      path: "/Message",
+      name: "Message",
+      component: Message,
+      meta: {
+        title: "消息",
+        isManage: true
+      },
+      children: [
+        {
+          path: "/Message/CommentMessage",
+          name: "CommentMessage",
+          component: CommentMessage,
+          meta: {
+            title: "博客评论",
+            isManage: true
+          }
+        },
+        {
+          path: "/Message/SystemMessage",
+          name: "SystemMessage",
+          component: SystemMessage,
+          meta: {
+            title: "系统消息",
+            isManage: true
+          }
+        }
+      ]
+    },
+    {
+      path: "/Help",
+      name: "Help",
+      component: Help,
+      meta: {
+        title: "帮助",
         isManage: true
       }
     },
@@ -73,9 +115,8 @@ router.beforeEach((to, from, next) => {
   else {
     next();
   }
-  if(to.matched.length == 0)
-  {
-    next({path:"/"});
+  if (to.matched.length == 0) {
+    next({ path: "/" });
   }
 });
 

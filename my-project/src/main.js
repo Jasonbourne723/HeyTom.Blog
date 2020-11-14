@@ -10,6 +10,7 @@ import   jwt  from  'jsonwebtoken'
 
 import utils from './api/util.js';   //获取url参数
 import echarts from 'echarts'
+import * as signalR from '@aspnet/signalr'
 
 
 Vue.config.productionTip = false;
@@ -185,6 +186,7 @@ Vue.use(utils);
 
  //安装组件
  Vue.use(VueTinymce);
+ Vue.use(signalR)
 
 Vue.use(jwt);
 /* eslint-disable no-new */

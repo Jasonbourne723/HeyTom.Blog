@@ -30,11 +30,6 @@
                     <span># {{ToDateTime(item.createDate)}}</span>
                     <span>{{item.userName}}</span>
                 </div>
-                <!-- <div v-if="item.backId > 0" style=" margin-top: 10px;">
-                    <span style="font-size: smaller;">
-                        <el-link :underline=false type="primary">@ {{item.backuserName}}</el-link>
-                    </span>
-                </div> -->
                 <a :name="item.id">
                     <div v-html="item.content" style="color: gray;"></div>
                 </a>
@@ -204,7 +199,7 @@
 
             }
         },
-        mounted() {
+        created() {
             var id = this.$route.params.Id;
             this.GetOne(id);
             this.GetBlogComments(id.toString());

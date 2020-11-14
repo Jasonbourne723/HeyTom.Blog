@@ -59,8 +59,8 @@
                 },
                 logintitle: "系统登录",
                 loginparam: {
-                    email: "420994592@qq.com",
-                    password: "123"
+                    email: "",
+                    password: ""
                 }
             };
         },
