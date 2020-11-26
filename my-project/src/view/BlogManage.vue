@@ -1,17 +1,40 @@
 <template>
     <div>
-        <el-table :data="Blogs" style="width: 100%" size="large" :row-class-name="TableRowClassName">
-            <el-table-column prop="name" label="标题" width="500">
+        <div style="margin-bottom: 10px;">
+            <el-button type="primary" size="small" @click="GetBlogs">查询</el-button>
+        </div>
+        <div style="margin-bottom: 10px;">
+            <el-input placeholder="文章标题" v-model="Name" style="width: 200px;"></el-input>
+            <span style="margin: 20px;"></span>
+            <el-select v-model="CategoryId" placeholder="分类" :clearable="true">
+                <el-option v-for="item in Categorys" :key="item.id" :label="item.name" :value="item.id">
+                </el-option>
+            </el-select>
+            <span style="margin: 20px;"></span>
+            <el-select v-model="Status" placeholder="发布状态" :clearable="true">
+                <el-option v-for="item in PostStatus" :key="item.id" :label="item.name" :value="item.id">
+                </el-option>
+            </el-select>
+        </div>
+        <el-table :data="Blogs" style="width: 100%" size="large">
+            <el-table-column prop="name" label="标题" width="400">
             </el-table-column>
-            <el-table-column prop="categoryName" label="分类" width="500">
+            <el-table-column prop="categoryName" label="分类" width="200">
             </el-table-column>
-            <el-table-column prop="createDate" label="发布日期" width="300">
+            <el-table-column :formatter="CreateTime" label="发布日期" width="300">
             </el-table-column>
-            <el-table-column :prop="status" label="发布状态" :formatter="StatusName">
+            <el-table-column :formatter="StatusName" label="发布状态" width="200">
+            </el-table-column>
+            <el-table-column :formatter="IsTop" label="置顶" width="200">
             </el-table-column>
             <el-table-column label="操作" width="200">
                 <template slot-scope="scope">
                     <el-button type="text" @click="HandleEdit(scope.$index, scope.row)">编辑</el-button>
+                </template>
+            </el-table-column>
+            <el-table-column label="操作" width="200">
+                <template slot-scope="scope">
+                    <el-button type="text" @click="HandleShow(scope.$index, scope.row)">查看</el-button>
                 </template>
             </el-table-column>
             <el-table-column label="操作">
@@ -32,41 +55,68 @@
     </div>
 </template>
 <script>
-    import { GetBlogRequest, UpdateBlogRequest, DeleteBlogRequest } from "../api/api";
+    import { GetBlogRequest, UpdateBlogRequest, DeleteBlogRequest, GetCategoryRequest } from "../api/api";
     export default {
 
         data() {
             return {
                 Blogs: [],
                 RecordCount: 0,
-                CategoryId: 0,
+                CategoryId: '',
                 Name: "",
-                PageIndex: 1
+                PageIndex: 1,
+                Categorys: [],
+                PostStatus: [
+                    {
+                        "id": 0,
+                        "name": "未发布"
+                    },
+                    {
+                        "id": 1,
+                        "name": "已发布"
+                    },
+                    {
+                        "id": 2,
+                        "name": "全部"
+                    }
+                ],
+                Status: 2
             }
         },
         methods: {
-            StatusName: function (row,column) {
-                if(row.status == 0)
-                {
+            GetCatetory: function () {
+                GetCategoryRequest().then(res => {
+                    if (res.IsSuccess) {
+                        this.Categorys = res.TModel;
+                    }
+                });
+            },
+            StatusName: function (row, column) {
+                if (row.status == 0) {
                     return "未发布";
                 }
-                else
-                {
+                else {
                     return "已发布"
                 }
             },
-
-            TableRowClassName({ row, rowIndex }) {
-                // if (row.isDel === 1) {
-                //     return 'warning-row';
-                // } else if (row.status === 0) {
-                //     return 'info-row';
-                // }
-                return '';
+            IsTop: function (row, column) {
+                if (row.isTop == 0) {
+                    return "否";
+                }
+                else {
+                    return "是"
+                }
+            },
+            CreateTime: function (row, column) {
+                var createDate = new Date(row.createDate);
+                return this.$utils.ToDateTime(createDate);
             },
             CurrentChange: function (val) {
                 this.PageIndex = val;
                 this.GetBlogs();
+            },
+            HandleShow(index, row) {
+                this.$router.push({ path: `/Blog/${row.id}` });
             },
             HandleEdit(index, row) {
                 this.$router.push({ path: "/EditBlog", query: { id: row.id } });
@@ -92,6 +142,7 @@
                 });
             },
             GetBlogs: function () {
+                // console.log("category:"+this.CategoryId);
                 var param = {
                     "pageIndex": this.PageIndex,
                     "pageSize": 10,
@@ -108,7 +159,7 @@
                     param.filter.push(
                         {
                             "field": "categoryId",
-                            "value": this.CategoryId,
+                            "value": this.CategoryId.toString(),
                             "operator": "=",
                             "connector": "and"
                         })
@@ -119,6 +170,15 @@
                             "field": "name",
                             "value": `%${this.Name}%`,
                             "operator": "like",
+                            "connector": "and"
+                        })
+                }
+                if (this.Status < 2) {
+                    param.filter.push(
+                        {
+                            "field": "status",
+                            "value": this.Status.toString(),
+                            "operator": "=",
                             "connector": "and"
                         })
                 }
@@ -134,8 +194,7 @@
         },
         created() {
             this.PageIndex = 1;
-            this.CategoryId = this.$route.query.categoryId;
-            this.Name = this.$route.query.name;
+            this.GetCatetory();
             this.GetBlogs();
         },
         mounted() {

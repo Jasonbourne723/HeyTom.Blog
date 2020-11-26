@@ -1,10 +1,10 @@
 <template>
     <div>
-        <el-button type="primary" @click="AddMainMenuVisible=true">
+        <el-button type="primary" size="small" @click="AddMainMenuVisible=true">
             新增主菜单
         </el-button>
 
-        <el-dialog title="新增主菜单" :visible.sync="AddMainMenuVisible" width="30%">
+        <el-dialog title="新增主菜单" :visible.sync="AddMainMenuVisible" width="30%" :close-on-click-modal="false">
             <div class="divdialog">
                 <el-input type="text" placeholder="菜单名称" v-model="MainMenu.title"></el-input>
                 <el-input type="text" placeholder="菜单图标" v-model="MainMenu.icon"></el-input>
@@ -12,7 +12,7 @@
                 <el-button @click="AddMainMenuVisible = false">取 消</el-button>
             </div>
         </el-dialog>
-        <el-dialog :title="IsAddMenu?'新增子菜单':'编辑子菜单'" :visible.sync="AddSubMenuVisible" width="30%">
+        <el-dialog :title="IsAddMenu?'新增子菜单':'编辑子菜单'" :visible.sync="AddSubMenuVisible" width="30%" :close-on-click-modal="false">
             <div class="divdialog">
                 <el-input type="text" placeholder="菜单名称" v-model="SubMenu.title"></el-input>
                 <el-input type="text" placeholder="路由路径" v-model="SubMenu.path"></el-input>

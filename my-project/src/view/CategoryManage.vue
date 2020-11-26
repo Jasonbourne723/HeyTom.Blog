@@ -1,10 +1,10 @@
 <template>
     <div>
-        <el-button type="primary" @click="
+        <el-button type="primary" size="small" @click="
         AddOrUpdate=0,Categroy={}, AddCategoryVisible=true">
             新增
         </el-button>
-        <el-dialog :title="CategroyOperateType" :visible.sync="AddCategoryVisible" width="30%">
+        <el-dialog :title="CategroyOperateType" :visible.sync="AddCategoryVisible" width="30%" :close-on-click-modal="false">
             <el-input type="text" placeholder="名称" v-model="Categroy.name"></el-input>
             <div style="margin: 20px 0;"></div>
             <el-input type="textarea" placeholder="备注" v-model="Categroy.remark"></el-input>

@@ -3,10 +3,16 @@
         <div class="blogitem" v-for="(item,index) in Blogs" :key="index">
             <el-link :underline="false" @click="GetOne(item.id)" style="font-size:20px;color:black">
                 {{item.categoryName}}
-                {{item.categoryName != null?":":""}} {{item.name}}</el-link>
-            <p></p>
-            <span> <i class="el-icon-edit"></i> 评论(1) </span>
-            <span> <i class="el-icon-reading"></i> 阅读(2)</span>
+                {{item.categoryName != null?":":""}} {{item.name}} </el-link>
+            <span v-show="item.isTop == 1" style="margin-left: 10px; ">
+                <el-tag size="mini" type="danger">{{item.isTop == 1?"置顶":""}}</el-tag>
+            </span>
+            <p>
+                <el-tag size="mini" v-for="(tagItem,index) in item.tags" :key="index" style="margin-right: 4px;">{{tagItem.tagName}}</el-tag>
+            </p>
+            <p><span> <i class="el-icon-reading"></i> 阅读(2)</span>
+                <span> <i class="el-icon-edit"></i> 评论(1) </span></p>
+
             <el-divider content-position="right">{{ToDateTime(item.createDate)}}</el-divider>
         </div>
         <div>
@@ -26,6 +32,7 @@
                 }],
                 RecordCount: 0,
                 CategoryId: 0,
+                TagId:0,
                 Name: "",
                 PageIndex: 1,
                 PageSize: 10
@@ -50,9 +57,19 @@
                             "value": "0",
                             "operator": "=",
                             "connector": "and"
+                        },
+                        {
+                            "field": "status",
+                            "value": "1",
+                            "operator": "=",
+                            "connector": "and"
                         }
                     ],
                     "sort": [
+                        {
+                            "field": "isTop",
+                            "value": "desc"
+                        },
                         {
                             "field": "createDate",
                             "value": "desc"
@@ -74,6 +91,16 @@
                             "field": "name",
                             "value": `%${this.Name}%`,
                             "operator": "like",
+                            "connector": "and"
+                        })
+                }
+                if(this.TagId > 0)
+                {
+                    param.filter.push(
+                        {
+                            "field": "tagId",
+                            "value": this.TagId,
+                            "operator": "=",
                             "connector": "and"
                         })
                 }
@@ -101,6 +128,7 @@
             this.PageIndex = 1;
             this.CategoryId = this.$route.query.categoryId;
             this.Name = this.$route.query.name;
+            this.TagId = this.$route.query.tagId;
             this.GetBlogs();
         },
         watch: {
@@ -108,6 +136,7 @@
                 this.PageIndex = 1;
                 this.CategoryId = this.$route.query.categoryId;
                 this.Name = this.$route.query.name;
+                this.TagId = this.$route.query.tagId;
                 this.GetBlogs();
             }
         },

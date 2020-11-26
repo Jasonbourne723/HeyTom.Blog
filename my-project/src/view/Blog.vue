@@ -243,5 +243,6 @@
         padding: 10px;
         font-size: 1em;
         border: 1px cornflowerblue solid;
+        line-height:20px;
     }
 </style>

@@ -52,9 +52,12 @@ axios.interceptors.response.use(
     }
 );
 
-export const BlogApiUrl = "http://localhost/OpenApi/myBlog";
-export const ManageApiUrl = "http://localhost/OpenApi/Manage";
-export const OAuthUrl = "http://localhost/OpenApi/OAuth";
+export const BaseApiUrl = "http://localhost";
+
+export const BlogApiUrl = `${BaseApiUrl}/OpenApi/myBlog`;
+export const ManageApiUrl = `${BaseApiUrl}/OpenApi/Manage`;
+export const OAuthUrl = `${BaseApiUrl}/OpenApi/OAuth`;
+export const ResourcesUrl = `${BaseApiUrl}/OpenApi/Resources`;
 
 
 //login
@@ -129,6 +132,10 @@ export const UpdateCategoryRequest = params => {
     return axios.post(`${BlogApiUrl}/api/Category/Update`, params).then(res => res.data);
 }
 
+export const GetAllTagRepquest = params => {
+    return axios.post(`${BlogApiUrl}/api/tag/GetAll`, params).then(res => res.data);
+}
+
 //menumanage
 export const GetAllMenuRequest = () => {
     return axios.post(`${ManageApiUrl}/api/Menu/GetAllMenu`, {}).then(res => res.data);
@@ -190,4 +197,31 @@ export const SetMenuPermissionsRequest = params => {
 
 export const GetUsersRequest = params => {
     return axios.post(`${ManageApiUrl}/api/User/List`, params).then(res => res.data);
+}
+
+
+
+export const GetPhotoAlbumsRequest = params => {
+    return axios.post(`${ResourcesUrl}/api/PhotoAlbum/List`, params).then(res => res.data);
+}
+
+export const GetPhotoAlbumRequest = params => {
+    return axios.post(`${ResourcesUrl}/api/PhotoAlbum/GetOne`, params).then(res => res.data);
+}
+export const AddPhotoAlbumRequest = params => {
+    return axios.post(`${ResourcesUrl}/api/PhotoAlbum/Add`, params).then(res => res.data);
+}
+export const UpdatePhotoAlbumRequest = params => {
+    return axios.post(`${ResourcesUrl}/api/PhotoAlbum/Update`, params).then(res => res.data);
+}
+export const DeletePhotoAlbumRequest = params => {
+    return axios.post(`${ResourcesUrl}/api/PhotoAlbum/Remove`, params).then(res => res.data);
+}
+
+export const AddImageRequest = params => {
+    return axios.post(`${ResourcesUrl}/api/Photo/AddImage`, params,{ headers: { 'Content-Type': 'multipart/form-data' } }).then(res => res.data);
+}
+
+export const GetPhotosRequest = params => {
+    return axios.post(`${ResourcesUrl}/api/Photo/List`, params).then(res => res.data);
 }

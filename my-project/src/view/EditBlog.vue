@@ -5,14 +5,20 @@
             <vue-tinymce v-model="Blog.content" :setting="Setting" />
         </div>
 
-      <div>
-          <p>分类： <el-radio v-model="Blog.categoryId"  v-for="(item,index) in Categorys" :key="index" :label="item.id">{{item.name}}</el-radio></p> 
-      </div>
-        <!-- <el-select v-model="Blog.categoryId" filterable placeholder="请选择" :clearable="true">
-            <el-option v-for="item in Categorys" :key="item.id" :label="item.name" :value="item.id">
-            </el-option>
-        </el-select> -->
-        <el-button type="primary" @click="AddBlog">发布</el-button>
+        <div>
+            <p>分类： <el-radio v-model="Blog.categoryId" v-for="(item,index) in Categorys" :key="index" :label="item.id">
+                    {{item.name}}</el-radio>
+            </p>
+        </div>
+        <div>
+            <span>是否发布： <el-radio v-model="Blog.status" v-for="(item,index) in PostStatus" :key="index" :label="item.id">
+                    {{item.name}}</el-radio>
+            </span>
+            <span style="margin-left: 20px;">是否置顶： <el-radio v-model="Blog.isTop" v-for="(item,index) in IsTop" :key="index" :label="item.id">
+                    {{item.name}}</el-radio>
+            </span>
+        </div>
+        <el-button type="primary" size="small"  style="margin-top: 20px;" @click="AddBlog">发布</el-button>
     </div>
 </template>
 
@@ -25,19 +31,38 @@
                     id: 0,
                     name: "",
                     content: "",
-                    categoryId: ""
+                    categoryId: "",
+                    status: 0,
+                    isTop: 0
                 },
                 Setting: {
                     height: 600,
                     menubar: false,
-                    plugins: "codesample hr lists emoticons image",
-                    toolbar: 'lineheight  undo redo| codesample hr | numlist bullist | styleselect alignleft  alignright | bold italic subscript superscript | formats removeformat newdocument | forecolor backcolor | emoticons image'
+                    plugins: "codesample hr lists emoticons image preview nonbreaking",
+                    toolbar: 'nonbreaking lineheight  undo redo| codesample hr | numlist bullist | styleselect alignleft  alignright | bold italic subscript superscript | formats removeformat newdocument | forecolor backcolor | emoticons image preview',
+                    nonbreaking_force_tab: true
                 },
-                Categorys: []
+                Categorys: [],
+                PostStatus: [{
+                    id: 0,
+                    name: "否"
+                }, {
+                    id: 1,
+                    name: "是"
+                }],
+                IsTop: [
+                    {
+                        id: 0,
+                        name: "否"
+                    }, {
+                        id: 1,
+                        name: "是"
+                    }
+                ]
             }
         },
         methods: {
-          
+
             GetCatetory: function () {
                 GetCategoryRequest().then(res => {
                     if (res.IsSuccess) {
@@ -71,6 +96,7 @@
                                 message: '发布成功',
                                 type: 'success'
                             });
+                            this.$router.push("/blogmanage");
                         } else {
                             this.$notify({
                                 title: '失败',

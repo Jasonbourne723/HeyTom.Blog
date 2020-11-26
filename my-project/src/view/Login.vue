@@ -9,33 +9,26 @@
                 <el-input type="password" v-model="loginparam.password" auto-complete="off" placeholder="密码"></el-input>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" @click="LoginAccount">登录</el-button>
-                <el-button type="success" @click="RegisterVisible=true" style="margin-left:50px">
+                <el-button type="primary" @click="LoginAccount" >  登录</el-button>
+                <el-button type="primary" @click="LoginByGitHub" style="margin-left: 30px;" >
+                    <i class="el-icon-key"></i>
+                    GitHub登录
+                </el-button>
+                <el-button type="success" @click="RegisterVisible=true"  style="margin-left: 30px;" >
                     注册
-                </el-button>
-            </el-form-item>
-            <el-form-item>
-                <el-button type="info" @click="LoginByGitHub" style="width:160px;">
-                    <i class="el-icon-key"></i>
-                    github登录
-                </el-button>
-                <el-button type="success" style="width:160px;">
-                    <i class="el-icon-key"></i>
-                    微信登录
                 </el-button>
             </el-form-item>
         </el-form>
 
-        <el-dialog title="注册" :visible.sync="RegisterVisible" width="40%" style="margin-left: 30%;">
+        <el-dialog title="注册" :visible.sync="RegisterVisible"  width="40%" top="15%" :append-to-body="true" :close-on-click-modal="false"  :center="true">
             <el-form>
-                <el-input type="text" placeholder="邮箱" v-model="RegisterInfo.email"></el-input>
+                <el-input  prefix-icon="el-icon-user" type="text" placeholder="昵称" v-model="RegisterInfo.nickName" style="margin-bottom: 20px;"></el-input>
+                <el-input prefix-icon="el-icon-chat-dot-square" type="text" placeholder="邮箱" v-model="RegisterInfo.email" style="margin-bottom: 20px;"></el-input>
                 <el-form-item>
-                    <el-input type="text" placeholder="验证码" v-model="RegisterInfo.verificationCode"></el-input>
-                    <el-button @click=" SendVerificationCode" :disabled="CanSendCode">点击发送</el-button>
+                    <el-input prefix-icon="el-icon-circle-check" type="text" placeholder="验证码" v-model="RegisterInfo.verificationCode" style="width: 80%;" ></el-input>
+                    <el-button  type="primary" @click=" SendVerificationCode" :disabled="CanSendCode" style="float: right;width:20%;" >点击发送</el-button>
                 </el-form-item>
-
-                <el-input type="text" placeholder="昵称" v-model="RegisterInfo.nickName"></el-input>
-                <el-input type="password" placeholder="密码" v-model="RegisterInfo.password"></el-input>
+                <el-input  prefix-icon="el-icon-lock" type="password" placeholder="密码" v-model="RegisterInfo.password" style="margin-bottom: 20px;"></el-input>
                 <el-button type="primary" @click="Register">确 定</el-button>
                 <el-button @click="RegisterVisible = false">取 消</el-button>
             </el-form>
@@ -178,7 +171,7 @@
         /* background: #50a3a2;
     background: -webkit-linear-gradient(top left, #50a3a2 0%, #53e3a6 100%);
     background: linear-gradient(to bottom right, #127c7b 0, #50a3a2); */
-        background-image: url(../assets/Login.png);
+        /* background-image: url(../assets/Login.png); */
         background-repeat: no-repeat;
         background-size: 100% 100%;
         opacity: 0.8;
@@ -194,15 +187,16 @@
         border-radius: 5px;
         -moz-border-radius: 5px;
         background-clip: padding-box;
-        margin-top: 100px;
-        margin-left: 100px;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%,-50%);
         width: 350px;
         padding: 35px 35px 15px 35px;
         background: #fff;
         border: 1px solid #eaeaea;
         box-shadow: 0 0 25px #cac6c6;
         z-index: 9999;
-        position: relative;
+        position: absolute;
     }
 
     .login-container .title {

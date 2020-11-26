@@ -17,10 +17,6 @@
                   </div>
                 </el-col>
                 <el-col :span="4">
-                  <div style="font-size: 10px; text-align: right; margin-right: 40px; margin-top: 5px;">
-                    <el-link type="primary" :underline=false @click="RouteToLogin">{{UserLoginStatus()}}</el-link>
-                    <el-link type="primary" v-show="IsLogin" :underline=false @click="BlogLogOut">退出</el-link>
-                  </div>
                   <div id="divSearch">
                     <el-input placeholder="请输入内容" v-model="SearchStr" @keyup.enter.native="GetBlogByName">
                       <i slot="suffix" class="el-icon-search el-input__icon"></i>
@@ -49,6 +45,15 @@
                   </div>
                 </div>
                 <div id="divAbout">
+                  <div style="margin-left: 5px;">
+                    <el-link v-for="(item,index) in Tags" :key="index" :underline="false" @click="GetBlogByTag(item.tagId)">
+                      <el-tag size="mini"  style="margin-right: 4px;">{{item.tagName}}
+                      </el-tag>
+                    </el-link>
+
+                  </div>
+                </div>
+                <div id="divAbout">
                   <div>
                     <p>关于</p>
                   </div>
@@ -67,7 +72,7 @@
     <transition v-else>
       <el-container class="manage">
         <el-header class="manage">
-          <el-link href="/" :underline="false"><img src="./assets/logo.png" width="140px" alt="" srcset=""
+          <el-link :underline="false"><img src="./assets/logo.png" width="140px" alt="" srcset=""
               style="margin-top:10px;float:left;"> </el-link>
           <div class="navuser">
             <el-dropdown>
@@ -104,13 +109,18 @@
           <el-aside class="manage" :width="AsideWidth">
             <el-menu :collapse="IsCollapse" :router=true background-color="#262626" text-color="#fff"
               active-text-color="#ffd04b" :unique-opened=true @mouseenter.native="AsideMouseEnterHandle($event)">
+              <el-menu-item index="/">
+                <i class="el-icon-s-home"></i>
+                <span slot="title">首页</span>
+              </el-menu-item>
               <el-submenu v-for="(item,index) in Menus" :key="index" :index="index.toString()">
                 <template slot="title">
                   <i :class="item.icon"></i>
                   <span>{{item.title}}</span>
                 </template>
                 <el-menu-item-group>
-                  <el-menu-item v-for="(subMenu,i) in item.children" :key="i" :index="subMenu.path">{{subMenu.title}}
+                  <el-menu-item v-for="(subMenu,i) in item.children" :key="i" :index="subMenu.path"><span
+                      style="margin-left: 15px;">{{subMenu.title}}</span>
                   </el-menu-item>
                 </el-menu-item-group>
               </el-submenu>
@@ -122,9 +132,6 @@
             </div>
           </el-aside>
           <el-main class="manage" @mouseout.native="AsideMouseOutHandle($event)">
-            <!-- <div class="divpageheader" style="line-height: 20px;">
-              <p>{{this.$route.meta.title}}</p>
-            </div> -->
             <div class="divbody">
               <router-view></router-view>
             </div>
@@ -134,10 +141,9 @@
     </transition>
   </div>
 </template>
-
 <script>
 
-  import { GetCategoryRequest, GetAuthorRequest, GetMenuByEmailRequest } from "./api/api";
+  import { GetCategoryRequest, GetAuthorRequest, GetMenuByEmailRequest, GetAllTagRepquest } from "./api/api";
   import * as signalR from "@aspnet/signalr";
   export default {
     name: 'App',
@@ -159,7 +165,8 @@
         RouteObjs: [],
         Menus: [],
         AlreadyLoadMenu: 0,
-        User: {}
+        User: {},
+        Tags: []
       }
     },
     methods: {
@@ -198,10 +205,10 @@
 
       },
       AsideMouseEnterHandle: function (e) {
-        this.IsCollapse = false;
+        // this.IsCollapse = false;
       },
       AsideMouseOutHandle: function (e) {
-        this.IsCollapse = true;
+        //this.IsCollapse = true;
       },
       CollapseHandle: function () {
         this.IsCollapse = !this.IsCollapse;
@@ -210,6 +217,13 @@
         GetCategoryRequest().then(res => {
           if (res.IsSuccess) {
             this.Categorys = res.TModel;
+          }
+        });
+      },
+      GetTags: function () {
+        GetAllTagRepquest().then(res => {
+          if (res.IsSuccess) {
+            this.Tags = res.TModel;
           }
         });
       },
@@ -228,6 +242,11 @@
       GetBlogByName: function () {
         if (this.$route.query.name != this.SearchStr) {
           this.$router.push({ path: "/Blogs", query: { name: this.SearchStr } });
+        }
+      },
+      GetBlogByTag: function(tagId){
+        if (this.$route.query.tagId != tagId) {
+          this.$router.push({ path: "/Blogs", query: { tagId: tagId } });
         }
       },
       StartSignalr: function () {
@@ -255,6 +274,7 @@
     mounted() {
       this.GetCatetory();
       this.GetAuthor();
+      this.GetTags();
     },
     computed: {
       Email: function () {
@@ -284,7 +304,6 @@
           };
           GetMenuByEmailRequest(params).then(res => {
             if (res.IsSuccess) {
-              console.log(res.TModel);
               this.$notify({
                 title: '成功',
                 message: '获取菜单权限成功',
@@ -309,6 +328,7 @@
                         isManage: true,
                         title: ea.title
                       },
+                      children: []
                     };
                     menuObj.children.push({
                       name: ea.name,
@@ -320,18 +340,22 @@
                       routeObj.children.push({
                         name: child.name,
                         path: child.path,
-                        component: () => import(`@/view/${child.fileName}.vue`),
+                        component: () => import(`@/view/${ea.fileName}/${child.fileName}.vue`),
                         meta: {
                           isManage: true,
                           title: child.title
                         },
                       });
                     });
+                    if (routeObj.children.length > 0) {
+                      window.localStorage.setItem(routeObj.name, JSON.stringify(routeObj.children))
+                    }
                     this.RouteObjs.push(routeObj);
 
                   });
                   this.Menus.push(menuObj);
                 });
+
                 this.$router.addRoutes(this.RouteObjs);
 
               }
@@ -353,7 +377,6 @@
     },
     watch: {
       '$route'(to, from) {
-        console.log(to);
         if (to.meta.noNeedOAuth === true) {
           return;
         }
@@ -367,7 +390,6 @@
             };
             GetMenuByEmailRequest(params).then(res => {
               if (res.IsSuccess) {
-                console.log(res.TModel);
                 this.$notify({
                   title: '成功',
                   message: '获取菜单权限成功',
@@ -392,6 +414,7 @@
                           isManage: true,
                           title: ea.title
                         },
+                        children: []
                       };
                       menuObj.children.push({
                         name: ea.name,
@@ -403,13 +426,16 @@
                         routeObj.children.push({
                           name: child.name,
                           path: child.path,
-                          component: () => import(`@/view/${child.fileName}.vue`),
+                          component: () => import(`@/view/${ea.fileName}/${child.fileName}.vue`),
                           meta: {
                             isManage: true,
                             title: child.title
                           },
                         });
                       });
+                      if (routeObj.children.length > 0) {
+                        window.localStorage.setItem(routeObj.name, JSON.stringify(routeObj.children))
+                      }
                       this.RouteObjs.push(routeObj);
 
                     });
@@ -460,7 +486,7 @@
   #divSearch {
     font-size: xx-large;
     text-align: left;
-    margin-top: 0px;
+    margin-top: 20px;
     border: 5px hidden gray;
     padding-right: 20px;
     font-weight: bolder;
@@ -468,10 +494,12 @@
 
   #divCategroy,
   #divAbout {
-    margin: 30px;
+    margin-top: 10px;
+    margin-left: 30px;
+    margin-right: 30px;
     border: 1px solid gainsboro;
     border-radius: 10px;
-    padding: 20px;
+    padding: 10px;
   }
 
   #divCategroy p,
@@ -518,7 +546,7 @@
   }
 
   .el-aside.manage {
-    background-color: "#262626";
+    background-color: "#262F3E";
   }
 
   /*解决侧边栏菜单收齐时卡顿问题*/

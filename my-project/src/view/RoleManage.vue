@@ -1,8 +1,8 @@
 <template>
     <div>
-        <el-button type="primary" @click="GetRoles"> 查询 </el-button>
-        <el-button @click=" Role={}, AddRoleVisible = true"> 新增 </el-button>
-        <el-dialog title="编辑角色" :visible.sync="AddRoleVisible" width="30%">
+        <el-button type="primary" size="small" @click="GetRoles"> 查询 </el-button>
+        <el-button size="small" @click=" Role={}, AddRoleVisible = true"> 新增 </el-button>
+        <el-dialog title="编辑角色" :visible.sync="AddRoleVisible" width="30%" :close-on-click-modal="false">
             <div class="divdialog">
                 <el-input type="text" placeholder="角色名称" v-model="Role.name"></el-input>
                 <el-input type="text" placeholder="角色备注" v-model="Role.remark"></el-input>
@@ -11,7 +11,7 @@
             </div>
         </el-dialog>
 
-        <el-dialog title="配置菜单权限" :visible.sync="SetMenuPermissionVisible" check-strictly=true width="30%">
+        <el-dialog title="配置菜单权限" :visible.sync="SetMenuPermissionVisible" check-strictly=true width="30%" :close-on-click-modal="false">
             <div style="margin-left:20px;">
                 <el-tree :data="MenuTree" show-checkbox default-expand-all node-key="id" ref="tree" highlight-current
                     :props="defaultProps">
